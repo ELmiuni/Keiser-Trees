@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teca (Tectona grandis) – Árboles del Campus | Keiser University</title>
+  <link rel="stylesheet" href="arboles.css">
+</head>
+<body>
+
+  <!-- 🔹 Header con imagen y overlay -->
+  <header class="hero-header colorful">
+    <div class="hero-content">
+      <h1>Teca (<em>Tectona grandis</em>)</h1>
+      <p>Árboles de Keiser University Latin American Campus</p>
+    </div>
+  </header>
+
+  <main class="container main">
+    <!-- 🔹 Tarjeta del árbol -->
+    <section class="tree-card colorful-card">
+      <div class="tree-card-image">
+        <img src="images/tectona.jpg" alt="Árbol de Teca">
+      </div>
+
+      <div class="tree-card-info">
+        <h2>Teca</h2>
+        <p class="sci-name"><em>Tectona grandis</em></p>
+
+        <h3>🌿 Beneficios ecológicos</h3>
+        <p>
+          El árbol de teca tiene una madera muy resistente al agua, insectos y hongos, ideal
+          para la fabricación de muebles y construcciones duraderas. Crece rápidamente y
+          se adapta a diferentes climas tropicales. Además, contribuye a la captura de
+          carbono, ayudando a reducir el impacto ambiental. Sus hojas, al caer, mejoran la
+          calidad del suelo y proporcionan buena sombra.
+        </p>
+
+        <div class="tree-meta">
+          <p><strong>📍 Ubicación:</strong> Zona Norte del campus</p>
+          <p><strong>🌱 Plantado:</strong> 2024</p>
+          <p><strong>🌳 Altura:</strong> 16 m</p>
+          <p><strong>✨ Estado:</strong> Excelente</p>
+        </div>
+
+        <div class="tree-actions">
+          <a href="index.html" class="btn btn-gradient">← Volver a la galería</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer colorful-footer">
+    <div class="container footer-inner">
+      <p>Keiser University Latin American Campus — Catálogo de árboles · © <span id="year"></span></p>
+      <small>Proyecto SGA 2025-2026</small>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
