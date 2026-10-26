@@ -1,0 +1,363 @@
+/* ============================================================
+   css/admin.css — Keiser Trees · Portal administrativo (admin.html)
+   Carga: <link rel="stylesheet" href="css/base.css">
+          <link rel="stylesheet" href="css/admin.css">
+   IMPORTANTE: admin.html debe incluir:
+     <meta name="robots" content="noindex, nofollow">
+   ============================================================ */
+
+/* ── Layout base de admin ─────────────────────────────────── */
+body.admin-body {
+  min-height: 100dvh;
+  background: var(--color-surface-low);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Barra superior (post-login) ──────────────────────────── */
+.admin-topbar {
+  background: var(--color-primary);
+  color: #fff;
+  padding: 0.75rem var(--space-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-md);
+}
+
+.admin-topbar__brand {
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+}
+
+.admin-topbar__user {
+  font-size: 0.875rem;
+  color: rgba(255,255,255,0.85);
+  font-family: var(--font-body);
+}
+
+.admin-topbar .btn-outline {
+  color: #fff;
+  border-color: rgba(255,255,255,0.4);
+  min-height: 36px;
+  padding: 0.375rem 0.875rem;
+}
+
+.admin-topbar .btn-outline:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.7);
+}
+
+/* ── Contenido principal ──────────────────────────────────── */
+.admin-main {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--space-xl) var(--space-md);
+}
+
+/* ── Vista A: Login ───────────────────────────────────────── */
+.admin-login-card {
+  background: var(--color-card);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  padding: var(--space-2xl) var(--space-xl);
+  width: 100%;
+  max-width: 400px;
+}
+
+.admin-login-card h1 {
+  font-family: var(--font-title);
+  font-size: 1.75rem;
+  color: var(--color-primary);
+  margin-bottom: var(--space-xs);
+  text-align: center;
+}
+
+.admin-login-card .login-subtitle {
+  text-align: center;
+  color: var(--color-bark-muted);
+  font-size: 0.9rem;
+  margin-bottom: var(--space-xl);
+}
+
+/* ── Vista B: Panel de alta de árbol ──────────────────────── */
+.admin-panel-card {
+  background: var(--color-card);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  padding: var(--space-xl);
+  width: 100%;
+  max-width: 640px;
+}
+
+.admin-panel-card h2 {
+  font-family: var(--font-title);
+  color: var(--color-primary);
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-sm);
+  border-bottom: 2px solid var(--color-surface-low);
+}
+
+/* ── Vista C: Acceso denegado ─────────────────────────────── */
+.admin-denied {
+  text-align: center;
+  padding: var(--space-2xl) var(--space-lg);
+  max-width: 400px;
+}
+
+.admin-denied h2 {
+  font-family: var(--font-title);
+  color: var(--color-error);
+  margin-bottom: var(--space-sm);
+}
+
+.admin-denied p {
+  color: var(--color-bark-muted);
+  margin-bottom: var(--space-lg);
+}
+
+/* ── Formularios ──────────────────────────────────────────── */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+}
+
+.form-label {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-bark);
+}
+
+.form-label--required::after {
+  content: " *";
+  color: var(--color-error);
+}
+
+.form-control {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.625rem 0.875rem;
+  background: var(--color-card);
+  border: 1.5px solid rgba(74,55,40,0.18);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--color-bark);
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.form-control::placeholder {
+  color: var(--color-bark-muted);
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-focus);
+}
+
+.form-control.is-invalid {
+  border-color: var(--color-error);
+}
+
+.form-control.is-invalid:focus {
+  box-shadow: var(--shadow-error);
+}
+
+textarea.form-control {
+  min-height: 100px;
+  resize: vertical;
+}
+
+select.form-control {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%234A3728' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.875rem center;
+  padding-right: 2.5rem;
+  cursor: pointer;
+}
+
+/* Mensaje de error bajo el campo */
+.form-error {
+  font-size: 0.8125rem;
+  color: var(--color-error);
+  font-family: var(--font-body);
+  margin-top: 2px;
+}
+
+/* ── Campo de archivo (foto) ──────────────────────────────── */
+.file-upload-area {
+  border: 2px dashed var(--color-primary-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl) var(--space-lg);
+  text-align: center;
+  background: var(--color-surface-low);
+  cursor: pointer;
+  transition: border-color var(--transition-base), background var(--transition-base);
+}
+
+.file-upload-area:hover,
+.file-upload-area:focus-within {
+  border-color: var(--color-primary);
+  background: var(--color-card);
+}
+
+.file-upload-area input[type="file"] {
+  /* Visualmente oculto pero accesible por teclado */
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}
+
+.file-upload-icon {
+  font-size: 2rem;
+  color: var(--color-primary-light);
+  margin-bottom: var(--space-sm);
+}
+
+.file-upload-text {
+  font-size: 0.9rem;
+  color: var(--color-bark-muted);
+  line-height: 1.5;
+}
+
+.file-upload-text strong {
+  color: var(--color-primary);
+}
+
+/* Hint de restricciones */
+.file-upload-hint {
+  font-size: 0.8rem;
+  color: var(--color-bark-muted);
+  margin-top: var(--space-xs);
+}
+
+/* ── Vista previa de imagen seleccionada ──────────────────── */
+.file-preview {
+  margin-top: var(--space-md);
+  display: none;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1.5px solid rgba(74,55,40,0.10);
+  box-shadow: var(--shadow-sm);
+  max-height: 300px;
+}
+
+.file-preview.is-visible {
+  display: block;
+}
+
+.file-preview img {
+  width: 100%;
+  height: 100%;
+  max-height: 300px;
+  object-fit: cover;
+}
+
+/* ── Checkbox "Publicar de inmediato" ─────────────────────── */
+.form-checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.form-checkbox {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid rgba(74,55,40,0.3);
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+.form-checkbox-label {
+  font-size: 0.9375rem;
+  color: var(--color-bark);
+  cursor: pointer;
+}
+
+/* ── Acciones del formulario ──────────────────────────────── */
+.form-actions {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  margin-top: var(--space-xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--color-surface-low);
+}
+
+.form-actions .btn {
+  flex: 1;
+  min-width: 140px;
+}
+
+/* ── Indicador de progreso de subida ──────────────────────── */
+.upload-progress {
+  display: none;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.upload-progress.is-visible {
+  display: flex;
+}
+
+.upload-progress__bar-track {
+  height: 6px;
+  background: var(--color-surface-low);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.upload-progress__bar-fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: var(--radius-pill);
+  width: 0%;
+  transition: width var(--transition-base);
+}
+
+.upload-progress__label {
+  font-size: 0.8rem;
+  color: var(--color-bark-muted);
+  text-align: center;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .admin-login-card,
+  .admin-panel-card {
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+  }
+}
