@@ -1,61 +1,45 @@
 <!doctype html>
 <html lang="es">
-
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ficha de Árbol — Keiser Trees</title>
-  <meta name="description" content="Información detallada sobre la especie botánica en el campus de Keiser University Latin American Campus.">
-
-  <!-- Fuentes: Ranade (Opción A: Fontshare) + Inter (Google Fonts) -->
-  <link rel="preconnect" href="https://api.fontshare.com">
-  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=ranade@400,500,600,700&display=swap">
+  <meta name="theme-color" content="#166534">
+  <title>Ficha de árbol | Keiser Trees</title>
+  <meta name="description" content="Conoce las especies arbóreas del campus de Keiser University Latin American Campus.">
+  <link rel="preload" as="image" href="images/keiserbanner.jpg" fetchpriority="high">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
-
-  <!-- Hojas de estilo unificadas -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/ficha.css">
 </head>
-
 <body>
-
-  <!-- Cabecera Hero reducida con banner -->
-  <header class="hero-header" style="height: 180px;">
+  <header class="hero-header">
     <div class="hero-content">
-      <h2 style="color: #fff; margin-bottom: 0.25rem; font-size: clamp(1.4rem, 3vw, 2.2rem);">Árboles del Campus</h2>
-      <p style="font-size: 0.95rem;">Keiser University Latin American Campus</p>
+      <span class="hero-eyebrow">Campus Verde · SGA 2025-2026</span>
+      <h1>Árboles del Campus</h1>
+      <p>Keiser University Latin American Campus · San Marcos, Carazo</p>
     </div>
   </header>
 
-  <!-- Contenedor principal de la ficha -->
   <main class="container">
-    <nav aria-label="Navegación de retorno" style="margin-top: var(--space-md);">
-      <a class="ficha-back" href="index.html">← Volver al catálogo</a>
-    </nav>
-
-    <!-- Contenedor dinámico (manejado por js/app-ficha.js) -->
-    <div id="ficha-contenedor" aria-live="polite">
-      <!-- Se inyecta dinámicamente: spinner de carga, ficha completa o mensaje de no encontrado -->
+    <a class="ficha-back" href="index.html">Volver a la galería</a>
+    <section id="ficha-contenedor" aria-live="polite">
+      <!-- js/app-ficha.js inyecta aquí la ficha del ID o el estado de error. -->
       <div class="ficha-loading" role="status">
-        <div class="kt-spinner" aria-hidden="true" style="width: 2.5rem; height: 2.5rem; border: 3px solid var(--color-primary-light); border-top-color: var(--color-primary); border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+        <div class="kt-spinner" aria-hidden="true"></div>
         <p>Cargando información del árbol…</p>
       </div>
-    </div>
+    </section>
   </main>
 
-  <!-- Pie de página -->
   <footer class="colorful-footer">
-    <div class="container">
-      <p>Keiser University Latin American Campus — Guía de Árboles del Campus</p>
+    <div class="container footer-inner">
+      <p>© 2026 Keiser University Latin American Campus · Guía de árboles del campus</p>
       <small>Proyecto SGA 2025-2026 · Iniciativa de Sostenibilidad y Educación Ambiental</small>
+      <a class="footer-admin" href="admin.html">Acceso de administración</a>
     </div>
   </footer>
-
-  <!-- Controlador ES Module de la ficha -->
   <script type="module" src="js/app-ficha.js"></script>
-
 </body>
-
 </html>

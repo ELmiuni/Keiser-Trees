@@ -4,57 +4,55 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Catálogo de Árboles del Campus — Keiser University</title>
+  <meta name="theme-color" content="#166534">
+  <title>Árboles del Campus | Keiser University</title>
   <meta name="description"
-    content="Guía botánica y catálogo interactivo de los árboles del campus de Keiser University Latin American Campus (San Marcos, Carazo, Nicaragua).">
-
-  <!-- Fuentes: Ranade (Opción A: Fontshare) + Inter (Google Fonts) -->
-  <link rel="preconnect" href="https://api.fontshare.com">
-  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=ranade@400,500,600,700&display=swap">
+    content="Explora la guía botánica de los árboles del campus de Keiser University Latin American Campus, San Marcos, Carazo.">
+  <link rel="preload" as="image" href="images/keiserbanner.jpg" fetchpriority="high">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
-
-  <!-- Hojas de estilo unificadas -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/galeria.css">
 </head>
 
 <body>
-
-  <!-- Cabecera Hero con banner institucional -->
   <header class="hero-header">
     <div class="hero-content">
+      <span class="hero-eyebrow">Campus Verde · SGA 2025-2026</span>
       <h1>Árboles del Campus</h1>
-      <p>Keiser University Latin American Campus · San Marcos, Carazo</p>
+      <p>Un recorrido por la vida que crece en nuestro entorno universitario, en San Marcos, Carazo.</p>
     </div>
   </header>
 
-  <!-- Contenido principal -->
   <main class="container">
-    <section class="intro">
-      <h2>Catálogo Botánico</h2>
-      <p>Conoce las especies arbóreas que forman parte de nuestro entorno universitario, su historia botánica y su
-        aporte a la conservación ambiental.</p>
+    <section class="intro" aria-labelledby="intro-title">
+      <p class="intro-kicker">Naturaleza que nos conecta</p>
+      <h2 id="intro-title">Un campus lleno de vida</h2>
+      <p>Conoce las especies que nos acompañan, descubre sus características y explora el aporte de cada árbol a un
+        campus más verde.</p>
     </section>
 
-    <!-- Galería reactiva conectada a Supabase (manejada por js/app-galeria.js) -->
-    <section id="galeria" class="gallery" aria-label="Galería de árboles">
-      <!-- Los estados (cargando, vacío, error) y las tarjetas se renderizan de forma dinámica y segura -->
+    <section id="gallery" class="gallery" aria-label="Galería de árboles" aria-live="polite">
+      <!-- #galeria conserva el selector del controlador; sus tarjetas dinámicas participan en esta cuadrícula. -->
+      <div id="galeria" class="gallery-items">
+        <div class="gallery-loading" role="status">
+          <span class="sr-only">Cargando árboles del campus…</span>
+          <div class="kt-spinner" aria-hidden="true"></div>
+          <p aria-hidden="true">Preparando la colección botánica…</p>
+        </div>
+      </div>
     </section>
   </main>
 
-  <!-- Pie de página -->
   <footer class="colorful-footer">
-    <div class="container">
-      <p>Keiser University Latin American Campus — Guía de Árboles del Campus</p>
+    <div class="container footer-inner">
+      <p>© 2026 Keiser University Latin American Campus · Guía de árboles del campus</p>
       <small>Proyecto SGA 2025-2026 · Iniciativa de Sostenibilidad y Educación Ambiental</small>
+      <a class="footer-admin" href="admin.html">Acceso de administración</a>
     </div>
   </footer>
-
-  <!-- Controlador ES Module de la galería -->
   <script type="module" src="js/app-galeria.js"></script>
-
 </body>
 
 </html>

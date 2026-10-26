@@ -413,7 +413,22 @@ async function subirImagenStorage(file, slug) {
     .from(BUCKET_NAME)
     .getPublicUrl(data.path);
 
-  return publicUrlData.publicUrl;
+  return { publicUrl: publicUrlData.publicUrl, path: data.path };
+}
+
+async function eliminarImagenStorage(path) {
+  if (!path) return;
+  const { error } = await supabase.storage.from(BUCKET_NAME).remove([path]);
+  if (error) throw error;
+}
+
+function valoresActualizacionCoinciden(arbol, updateData) {
+  return Boolean(arbol) && Object.entries(updateData).every(([key, value]) => {
+    const actual = arbol[key];
+    return actual == null && value == null
+      ? true
+      : String(actual) === String(value);
+  });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -703,6 +718,7 @@ btnCancelarEdicion?.addEventListener("click", () => {
 
 treeForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
+  const submitStartedAt = performance.now();
   ocultarAlerta(formAlert);
 
   // Extracción y sanitización básica de campos requeridos
@@ -775,6 +791,8 @@ treeForm?.addEventListener("submit", async (e) => {
   btnGuardar.disabled = true;
   btnGuardar.classList.add("btn-loading");
   btnGuardar.textContent = esEdicion ? "Actualizando…" : "Guardando…";
+  let nuevaImagenPath = null;
+  let esSeguroEliminarNuevaImagen = false;
 
   try {
     // 1. Manejo de imagen
@@ -783,7 +801,9 @@ treeForm?.addEventListener("submit", async (e) => {
     if (currentSelectedFile) {
       mostrarProgreso(30, "Subiendo fotografía a Supabase Storage…");
       const baseSlug = esEdicion && treeSlugInput.value ? treeSlugInput.value : normalizarSlug(nombreComun);
-      imagenUrlFinal = await subirImagenStorage(currentSelectedFile, baseSlug);
+      const imagenSubida = await subirImagenStorage(currentSelectedFile, baseSlug);
+      imagenUrlFinal = imagenSubida.publicUrl;
+      nuevaImagenPath = imagenSubida.path;
       mostrarProgreso(75, "Fotografía subida correctamente.");
     }
 
@@ -804,13 +824,64 @@ treeForm?.addEventListener("submit", async (e) => {
         aprobado: aprobado,
       };
 
-      const { error: updateErr } = await supabase
+      let errorUpdate = null;
+      const startedAt = performance.now();
+      try {
+        const { error } = await supabase
         .from("arboles")
         .update(updateData)
         .eq("id", arbolId);
+        errorUpdate = error;
+      } catch (error) {
+        errorUpdate = error;
+      }
 
-      if (updateErr) {
-        throw new Error(`Error en actualización: ${updateErr.message}`);
+      // Un timeout o respuesta perdida no indica si Postgres aplicó el cambio.
+      // Consultar la fila por ID antes de dar éxito o decidir si retirar la foto.
+      mostrarProgreso(92, "Verificando el resultado de la actualización…");
+      let arbolVerificado = null;
+      let errorVerificacion = null;
+      try {
+        const resultado = await supabase
+          .from("arboles")
+          .select("id, nombre_comun, nombre_cientifico, descripcion, beneficios, ubicacion, anio_plantacion, altura_m, estado_salud, imagen_url, aprobado")
+          .eq("id", arbolId)
+          .maybeSingle();
+        arbolVerificado = resultado.data;
+        errorVerificacion = resultado.error;
+      } catch (error) {
+        errorVerificacion = error;
+      }
+      const duracionMs = Math.round(performance.now() - startedAt);
+      const cambiosAplicados = valoresActualizacionCoinciden(arbolVerificado, updateData);
+      console.info("[Admin] resultado de edición", {
+        id: arbolId,
+        durationMs: duracionMs,
+        updateError: errorUpdate?.message || null,
+        verificationError: errorVerificacion?.message || null,
+        verified: cambiosAplicados,
+      });
+
+      if (!cambiosAplicados) {
+        // Solo se elimina la nueva foto si pudimos leer la fila y confirmar que
+        // no apunta a ella. Si la verificación falló, el estado queda incierto.
+        esSeguroEliminarNuevaImagen = !errorVerificacion;
+        if (errorVerificacion) {
+          throw new Error(`No se pudo confirmar el resultado (ID ${arbolId}). No reintentes todavía; verifica el registro en el panel. ${errorVerificacion.message}`);
+        }
+        if (!arbolVerificado) {
+          throw new Error(`No se encontró el registro con ID ${arbolId}; no se confirmó la edición.`);
+        }
+        throw new Error(`La base de datos no confirmó todos los cambios para el ID ${arbolId}. Error reportado: ${errorUpdate?.message || "sin error de respuesta"}.`);
+      }
+
+      // Se confirma por la fila, incluso si la respuesta del UPDATE se perdió.
+      if (errorUpdate) {
+        console.warn("[Admin] UPDATE informó error, pero la lectura por ID confirma los cambios.", {
+          id: arbolId,
+          durationMs: duracionMs,
+          error: errorUpdate.message || String(errorUpdate),
+        });
       }
 
       mostrarMensajeFormulario(`Árbol "${nombreComun}" actualizado exitosamente.`, "success");
@@ -848,14 +919,7 @@ treeForm?.addEventListener("submit", async (e) => {
         .insert([insertData]);
 
       if (insertErr) {
-        // Si hay conflicto de slug, intentar con sufijo
-        if (insertErr.code === "23505" && insertErr.message.includes("slug")) {
-          insertData.slug = `${slug}-${Math.floor(Math.random() * 900 + 100)}`;
-          const { error: retryErr } = await supabase.from("arboles").insert([insertData]);
-          if (retryErr) throw retryErr;
-        } else {
-          throw new Error(`Error al insertar: ${insertErr.message}`);
-        }
+        throw new Error(`No se confirmó el alta (posible estado incierto). No vuelvas a enviarla sin revisar el catálogo. ${insertErr.message}`);
       }
 
       mostrarMensajeFormulario(`Árbol "${nombreComun}" registrado exitosamente.`, "success");
@@ -864,7 +928,22 @@ treeForm?.addEventListener("submit", async (e) => {
       activarPestana("list");
     }
   } catch (err) {
-    console.error("[Admin submit error]:", err);
+    console.error("[Admin] error al guardar", {
+      id: treeIdInput.value || null,
+      durationMs: Math.round(performance.now() - submitStartedAt),
+      error: err?.message || String(err),
+    });
+    if (nuevaImagenPath && esSeguroEliminarNuevaImagen) {
+      try {
+        await eliminarImagenStorage(nuevaImagenPath);
+        console.info("[Admin] foto nueva retirada tras confirmar que la actualización no la adoptó.", { path: nuevaImagenPath });
+      } catch (cleanupError) {
+        console.error("[Admin] no se pudo retirar una foto sin referencia confirmada.", {
+          path: nuevaImagenPath,
+          error: cleanupError?.message || String(cleanupError),
+        });
+      }
+    }
     mostrarMensajeFormulario(err.message || "Ocurrió un error inesperado al guardar el árbol.", "error");
   } finally {
     ocultarProgreso();
