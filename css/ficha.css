@@ -1,0 +1,183 @@
+/* ============================================================
+   css/ficha.css — Keiser Trees · Ficha de árbol (arbol.html)
+   Carga: <link rel="stylesheet" href="css/base.css">
+          <link rel="stylesheet" href="css/ficha.css">
+   ============================================================ */
+
+/* ── Enlace de retorno ────────────────────────────────────── */
+.ficha-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin: var(--space-lg) 0 var(--space-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.ficha-back:hover {
+  text-decoration: underline;
+}
+
+/* ── Layout principal de ficha ────────────────────────────── */
+.ficha {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-xl);
+  margin-block: var(--space-lg) var(--space-2xl);
+}
+
+@media (min-width: 768px) {
+  .ficha {
+    grid-template-columns: 40% 1fr;
+    align-items: start;
+  }
+}
+
+/* ── Imagen de ficha ──────────────────────────────────────── */
+.ficha-media {
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  flex-shrink: 0;
+}
+
+.ficha-media img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;    /* ← corrección de object-fit: fill */
+  display: block;
+}
+
+/* Placeholder para ficha sin imagen */
+.ficha-media .card-placeholder--ficha {
+  border-radius: 0;
+}
+
+/* ── Panel de información ─────────────────────────────────── */
+.ficha-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.ficha-info h1 {
+  font-family: var(--font-title);
+  color: var(--color-primary);
+  margin-bottom: var(--space-xs);
+}
+
+/* Nombre científico */
+.ficha-info .sci-name {
+  margin-bottom: var(--space-sm);
+}
+
+/* Secciones de texto (descripción, beneficios) */
+.ficha-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.ficha-section h3 {
+  font-family: var(--font-title);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ficha-section p {
+  line-height: 1.75;
+  color: var(--color-bark);
+}
+
+/* ── Caja de metadatos ────────────────────────────────────── */
+.ficha-meta {
+  background: var(--color-surface-low);
+  border: 1px solid rgba(161,210,175,0.5);
+  border-left: 4px solid var(--color-primary-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-lg);
+  box-shadow: var(--shadow-sm);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm) var(--space-lg);
+}
+
+@media (max-width: 480px) {
+  .ficha-meta {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ficha-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ficha-meta-label {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-bark-muted);
+}
+
+.ficha-meta-value {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--color-bark);
+}
+
+/* Valor nulo: "Por confirmar" */
+.ficha-meta-value--null {
+  color: var(--color-bark-muted);
+  font-style: italic;
+}
+
+/* Estado de salud dentro de los metadatos */
+.ficha-meta-item--estado .ficha-meta-value {
+  margin-top: 2px;
+}
+
+/* ── Estado: cargando ficha ───────────────────────────────── */
+.ficha-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-2xl) 0;
+  color: var(--color-bark-muted);
+}
+
+/* ── Estado: árbol no encontrado / error ──────────────────── */
+.ficha-not-found {
+  text-align: center;
+  padding: var(--space-2xl) var(--space-lg);
+  max-width: 480px;
+  margin-inline: auto;
+}
+
+.ficha-not-found h2 {
+  font-family: var(--font-title);
+  color: var(--color-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.ficha-not-found p {
+  color: var(--color-bark-muted);
+  margin-bottom: var(--space-lg);
+}
+
+/* ── Botón de acciones en ficha ───────────────────────────── */
+.ficha-actions {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  margin-top: var(--space-md);
+}

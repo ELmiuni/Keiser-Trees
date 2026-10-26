@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Directiva OBLIGATORIA para evitar indexación en motores de búsqueda -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>Portal de Administración — Keiser Trees</title>
+
+  <!-- Fuentes del sistema (Ranade Opción A Fontshare + Inter Google Fonts) -->
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=ranade@400,500,600,700&display=swap">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+
+  <!-- Hojas de estilo unificadas -->
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/admin.css">
+
+  <!-- Estilos complementarios para pestañas y gestión de catálogo en el panel -->
+  <style>
+    /* Pestañas de navegación interna en el panel */
+    .admin-tabs {
+      display: flex;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-lg);
+      border-bottom: 2px solid var(--color-surface-low);
+      padding-bottom: var(--space-xs);
+    }
+
+    .admin-tab-btn {
+      background: transparent;
+      border: none;
+      padding: 0.625rem 1rem;
+      font-family: var(--font-body);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--color-bark-muted);
+      cursor: pointer;
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+      border-bottom: 3px solid transparent;
+      transition: color var(--transition-fast), border-color var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .admin-tab-btn:hover {
+      color: var(--color-primary);
+    }
+
+    .admin-tab-btn--active {
+      color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
+    }
+
+    /* Cabecera de la lista de árboles */
+    .admin-trees-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      margin-bottom: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .admin-trees-header h3 {
+      margin: 0;
+      color: var(--color-primary);
+      font-size: 1.25rem;
+    }
+
+    /* Lista y tarjetas de administración de árboles */
+    .admin-trees-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .admin-tree-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-md);
+      background: var(--color-card);
+      border: 1.5px solid rgba(74, 55, 40, 0.10);
+      border-radius: var(--radius-lg);
+      transition: box-shadow var(--transition-base), border-color var(--transition-base);
+    }
+
+    .admin-tree-item:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--color-primary-light);
+    }
+
+    .admin-tree-item--oculto {
+      background: var(--color-surface-low);
+      border-style: dashed;
+      opacity: 0.88;
+    }
+
+    .admin-tree-thumb {
+      width: 72px;
+      height: 72px;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--color-surface-low);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(74, 55, 40, 0.12);
+      font-size: 1.5rem;
+    }
+
+    .admin-tree-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .admin-tree-info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .admin-tree-title-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .admin-tree-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--color-primary);
+      margin: 0;
+    }
+
+    .badge-admin-status {
+      font-size: 0.7rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: var(--radius-pill);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-admin-status--publicado {
+      background: var(--estado-excelente-bg);
+      color: var(--estado-excelente-text);
+    }
+
+    .badge-admin-status--oculto {
+      background: #FFE4CC;
+      color: #8B4513;
+    }
+
+    .admin-tree-meta {
+      font-size: 0.8125rem;
+      color: var(--color-bark-muted);
+      margin: 0;
+    }
+
+    .admin-tree-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      flex-wrap: wrap;
+    }
+
+    .admin-btn-action {
+      min-height: 36px;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.8125rem;
+    }
+
+    @media (max-width: 640px) {
+      .admin-tree-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .admin-tree-actions {
+        width: 100%;
+        justify-content: flex-end;
+        padding-top: var(--space-xs);
+        border-top: 1px solid rgba(74, 55, 40, 0.08);
+      }
+    }
+  </style>
+</head>
+
+<body class="admin-body">
+
+  <!-- ── Barra superior (visible solo tras login verificado) ────────────────── -->
+  <header class="admin-topbar" id="admin-topbar" hidden>
+    <a class="admin-topbar__brand" href="admin.html">🌿 Keiser Trees — Panel de Control</a>
+    <div style="display: flex; align-items: center; gap: var(--space-md);">
+      <span class="admin-topbar__user" id="admin-email"></span>
+      <button class="btn btn-outline" id="btn-cerrar-sesion" type="button">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <!-- ── Contenedor principal de vistas ────────────────────────────────────── -->
+  <main class="admin-main">
+
+    <!-- ── VISTA A: Inicio de Sesión ─────────────────────────────────────────── -->
+    <div id="view-login" class="admin-login-card">
+      <h1>Administración</h1>
+      <p class="login-subtitle">Acceso restringido al equipo de gestión ambiental SGA</p>
+
+      <!-- Alerta accesible para errores de autenticación -->
+      <div id="login-error" class="alert alert-error" role="alert" style="margin-bottom: var(--space-md);" hidden>
+        <span class="alert-icon" aria-hidden="true">✗</span>
+        <p class="alert-message" id="login-error-msg"></p>
+      </div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label form-label--required" for="login-email">Correo institucional</label>
+          <input class="form-control" type="email" id="login-email" name="email" required autocomplete="email" placeholder="usuario@keiseruniversity.edu">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label form-label--required" for="login-password">Contraseña</label>
+          <input class="form-control" type="password" id="login-password" name="password" required autocomplete="current-password" placeholder="••••••••">
+        </div>
+
+        <div class="form-actions" style="margin-top: var(--space-lg); padding-top: 0; border: none;">
+          <button class="btn btn-primary" id="login-btn-submit" type="submit">Iniciar sesión</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ── VISTA B: Panel de Administración (Catálogo + Formulario) ───────────── -->
+    <div id="view-panel" class="admin-panel-card" hidden>
+
+      <!-- Pestañas de navegación interna -->
+      <nav class="admin-tabs" aria-label="Secciones del panel">
+        <button class="admin-tab-btn admin-tab-btn--active" id="tab-btn-list" type="button">
+          📋 Catálogo de árboles
+        </button>
+        <button class="admin-tab-btn" id="tab-btn-form" type="button">
+          ➕ Registrar nuevo árbol
+        </button>
+      </nav>
+
+      <!-- Mensajes globales de éxito o error en el panel -->
+      <div id="form-alert" role="alert" style="margin-bottom: var(--space-md);" hidden></div>
+
+      <!-- SECCIÓN 1: Catálogo y listado de árboles existentes -->
+      <section id="tab-content-list" aria-label="Listado de árboles registrados">
+        <div class="admin-trees-header">
+          <h3>Árboles del campus <span id="admin-trees-count" style="font-size: 0.95rem; font-weight: normal; color: var(--color-bark-muted);"></span></h3>
+          <button class="btn btn-outline" id="btn-refresh-list" type="button" style="min-height: 36px; padding: 0.35rem 0.75rem; font-size: 0.8125rem;">
+            🔄 Actualizar lista
+          </button>
+        </div>
+
+        <div class="admin-trees-list" id="admin-trees-list">
+          <!-- Se inyecta dinámicamente con js/admin.js -->
+        </div>
+      </section>
+
+      <!-- SECCIÓN 2: Formulario de Alta y Edición de Árbol -->
+      <section id="tab-content-form" aria-label="Formulario de árbol" hidden>
+        <h2 id="form-title">Registrar árbol nuevo</h2>
+
+        <form id="upload-form">
+          <!-- IDs ocultos para control de edición y foto previa -->
+          <input type="hidden" id="tree-id" value="">
+          <input type="hidden" id="tree-slug" value="">
+          <input type="hidden" id="tree-current-img-url" value="">
+
+          <!-- Nombre común -->
+          <div class="form-group">
+            <label class="form-label form-label--required" for="nombre_comun">Nombre común</label>
+            <input class="form-control" type="text" id="nombre_comun" name="nombre_comun" required maxlength="150" placeholder="Ej. Roble sabanero, Teca, Mango">
+          </div>
+
+          <!-- Nombre científico -->
+          <div class="form-group">
+            <label class="form-label form-label--required" for="nombre_cientifico">Nombre científico</label>
+            <input class="form-control" type="text" id="nombre_cientifico" name="nombre_cientifico" required maxlength="150" placeholder="Ej. Tabebuia rosea, Tectona grandis">
+          </div>
+
+          <!-- Ubicación en el campus -->
+          <div class="form-group">
+            <label class="form-label form-label--required" for="ubicacion">Ubicación en el campus</label>
+            <input class="form-control" type="text" id="ubicacion" name="ubicacion" required maxlength="200" placeholder="Ej. Zona Norte, frente al edificio administrativo">
+          </div>
+
+          <!-- Descripción general -->
+          <div class="form-group">
+            <label class="form-label form-label--required" for="descripcion">Descripción general</label>
+            <textarea class="form-control" id="descripcion" name="descripcion" rows="4" required maxlength="5000" placeholder="Describe el porte del árbol, su follaje, floración o adaptabilidad…"></textarea>
+          </div>
+
+          <!-- Beneficios ecológicos -->
+          <div class="form-group">
+            <label class="form-label" for="beneficios">Beneficios ecológicos y medicinales (opcional)</label>
+            <textarea class="form-control" id="beneficios" name="beneficios" rows="3" maxlength="3000" placeholder="Captura de carbono, sombra, alimento de fauna o propiedades melíferas…"></textarea>
+          </div>
+
+          <!-- Grid de Año y Altura -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-md);">
+            <div class="form-group">
+              <label class="form-label" for="anio_plantacion">Año de plantación aproximado</label>
+              <input class="form-control" type="number" id="anio_plantacion" name="anio_plantacion" min="1800" max="2100" placeholder="Ej. 2024">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="altura_m">Altura estimada (metros)</label>
+              <input class="form-control" type="number" id="altura_m" name="altura_m" min="0.1" max="150.0" step="0.1" placeholder="Ej. 16.5">
+            </div>
+          </div>
+
+          <!-- Estado de salud (selector conforme a CHECK de schema.sql) -->
+          <div class="form-group">
+            <label class="form-label" for="estado_salud">Estado de salud fitosanitaria</label>
+            <select class="form-control" id="estado_salud" name="estado_salud">
+              <option value="">-- Sin especificar --</option>
+              <option value="Excelente">Excelente</option>
+              <option value="Bueno">Bueno</option>
+              <option value="Regular">Regular</option>
+              <option value="En recuperación">En recuperación</option>
+              <option value="Malo">Malo</option>
+              <option value="Seco">Seco</option>
+            </select>
+          </div>
+
+          <!-- Subida de UNA sola foto (Storage: fotos-arboles/arboles/) -->
+          <div class="form-group">
+            <label class="form-label" for="foto">Fotografía del árbol (máximo 5 MB)</label>
+            <div class="file-upload-area" id="file-upload-area" role="button" tabindex="0" aria-label="Haz clic para seleccionar o arrastra una foto">
+              <input type="file" id="foto" name="foto" accept="image/jpeg,image/png,image/webp">
+              <div class="file-upload-icon" aria-hidden="true">📷</div>
+              <p class="file-upload-text">
+                <strong>Selecciona una foto</strong> o arrástrala aquí
+              </p>
+              <p class="file-upload-hint">JPG, PNG o WebP · Máximo 5 MB · Una sola foto</p>
+            </div>
+            <p class="form-error" id="err-foto" hidden></p>
+
+            <!-- Previsualización reactiva inmediata -->
+            <div class="file-preview" id="foto-preview">
+              <img id="foto-preview-img" src="" alt="Vista previa de la fotografía">
+            </div>
+            <p id="foto-preview-hint" style="font-size: 0.8125rem; color: var(--color-bark-muted); margin-top: 4px;"></p>
+          </div>
+
+          <!-- Casilla de verificación para aprobado / borrador -->
+          <div class="form-checkbox-group">
+            <input class="form-checkbox" type="checkbox" id="publicar" name="publicar" checked>
+            <label class="form-checkbox-label" for="publicar">
+              <strong>Publicar de inmediato en la galería pública</strong> (<code>aprobado = true</code>)
+            </label>
+          </div>
+
+          <!-- Barra de progreso de subida -->
+          <div class="upload-progress" id="upload-progress">
+            <div class="upload-progress__bar-track">
+              <div class="upload-progress__bar-fill" id="upload-bar"></div>
+            </div>
+            <p class="upload-progress__label" id="upload-label">Subiendo fotografía…</p>
+          </div>
+
+          <!-- Botones de acción del formulario -->
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit" id="btn-guardar">
+              Guardar árbol
+            </button>
+            <button class="btn btn-outline" type="button" id="btn-cancelar-edicion" hidden>
+              Cancelar edición
+            </button>
+          </div>
+        </form>
+      </section>
+
+    </div>
+
+    <!-- ── VISTA C: Acceso Denegado ───────────────────────────────────────────── -->
+    <div id="view-denied" class="admin-denied" hidden>
+      <h2>Acceso denegado</h2>
+      <p>Tu cuenta se ha autenticado con éxito, pero no figura en el registro de administradores autorizados de Keiser Trees.</p>
+      <button class="btn btn-outline" id="btn-cerrar-sesion-denied" type="button">Cerrar sesión</button>
+    </div>
+
+  </main>
+
+  <!-- Controlador ES Module de la administración -->
+  <script type="module" src="js/admin.js"></script>
+
+</body>
+
+</html>
