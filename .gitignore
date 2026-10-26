@@ -1,0 +1,15 @@
+# Variables de entorno y secretos
+.env
+.env.*
+!.env.example
+*.local
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Dependencias (si se llegaran a usar en el futuro)
+node_modules/
+dist/
+build/
