@@ -469,3 +469,36 @@ Las clases opcionales `.tree-silhouette--teca`, `--palmera`, `--pino`, `--malinc
 
 ---
 *Fin de HANDOFF.md — Guía de coordinación oficial.*
+
+## Incidencia reportada — edición del catálogo queda en 85% (2026-10-26)
+- **Para:** `fullstack`
+- **Archivo:** `js/admin.js`
+- **Qué:** Al editar un árbol, el formulario puede quedarse indefinidamente mostrando “Actualizando registro en la base de datos…” porque el `await supabase.from("arboles").update(...).eq("id", arbolId)` no define timeout ni cancelación.
+- **Por qué:** La interfaz no recupera el control ni muestra un error accionable si la llamada REST queda pendiente. La captura reporta el caso después de subir la imagen y antes de confirmar la actualización.
+- **Siguiente cambio sugerido:** Añadir límite de espera y manejo explícito de timeout/estado incierto a las operaciones de guardado (insert/update), registrar duración y error técnico sin exponer credenciales, y pedir una verificación de resultado por `id` antes de indicar éxito. Evitar reintentos ciegos, especialmente en altas.
+- **Revisión hecha:** La política SQL de `UPDATE` solo comprueba `public.is_admin()` en `USING`/`WITH CHECK`; la consulta filtra por la PK `id`. No se encontró un trigger de tabla en el esquema revisado. El estado público de Supabase estaba operativo, lo cual no verifica este proyecto ni la sesión concreta.
+- **Evidencia adicional:** La captura de Console no muestra errores; el formulario sigue esperando. La consola vacía no descarta una solicitud pendiente. Correlacionar la hora del intento con Logs > PostgREST/API Gateway; si no hay evento, revisar que el cliente haga el `fetch`; si hay evento, usar su estado y duración para separar red, permisos o ejecución SQL.
+
+## Diseño editorial beige y contrato visual dinámico (2026-10-26)
+
+**Para:** `fullstack`
+**Archivos visuales:** `index.html`, `arbol.html`, `css/base.css`, `css/galeria.css`, `css/ficha.css`.
+
+Conservar los hooks `#gallery`, `#galeria` y `#ficha-contenedor`. No agregar datos de árboles de ejemplo al HTML. La ficha debe seguir generándose en `js/render.js` con los siguientes selectores/clases y orden:
+
+```html
+<a class="card" href="arbol.html?id={id}">
+  <div class="card-media"><img src="{imagen_url}" alt="Fotografía de {nombre_comun}"></div>
+  <div class="card-body">
+    <h3 class="card-title">{nombre_comun}</h3>
+    <p class="sci-name">{nombre_cientifico}</p>
+    <div class="card-meta"><span class="card-meta-item">📍 {ubicacion}</span><span class="card-meta-item">🗓 {anio_plantacion}</span></div>
+    <div class="card-estado"><span class="badge-estado badge-estado--slug">{estado_salud}</span></div>
+  </div>
+  <div class="card-actions"><span class="btn btn-primary">Ver ficha →</span></div>
+</a>
+```
+
+Para una foto nula usar `.card-placeholder` dentro de `.card-media`. La ficha existente usa `<article class="ficha">`, `.ficha-media`, `.ficha-info`, `.ficha-meta` con cuatro `.ficha-meta-item`, `.ficha-section` y `.ficha-actions`. Fotos de ficha: `object-fit: cover`. Los metadatos pueden no estar presentes cuando el campo viene vacío.
+
+El hero carga `images/keiserbanner.jpg` como fondo mediante `css/base.css`; mantener degradado de baja opacidad para que la imagen permanezca visible. Se usaron como adorno `HOJAssspng.png` (marca pequeña del hero/divisor) y `SiluetaAborlespng.png` (footer, muy baja opacidad). No usar `IlustracionHierbaverde.png` ni `tecaEjemplo.png` en la interfaz; su acabado/fondo distrae. Las fotos `mango.png` y `madrono.png` solo deben mostrarse cuando sean la imagen asociada a un registro dinámico.
